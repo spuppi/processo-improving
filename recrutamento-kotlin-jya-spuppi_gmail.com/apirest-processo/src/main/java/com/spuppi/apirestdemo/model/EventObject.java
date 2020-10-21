@@ -1,61 +1,31 @@
 package com.spuppi.apirestdemo.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-import com.sun.istack.NotNull;
+import org.json.simple.JSONObject;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name="TB_EVENT_OBJ")
+@Document(collection = "EVENTS")
 public class EventObject {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long id;
-
-	@NotNull
-	private long issue;
+	private String id;
+	private JSONObject content;
 	
-	@NotNull
-	@Column(columnDefinition="TEXT")
-	private String obj;
-	
-	public EventObject() {};
-
-	public EventObject(long issue, String obj) {
-		this.issue = issue;
-		this.obj = obj;
+	public EventObject(JSONObject content) {
+		this.content = content;
 	}
-
-	public long getId() {
+	public String getId() {
 		return id;
 	}
-
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-
-	public long getIssue() {
-		return issue;
+	public JSONObject getContent() {
+		return content;
 	}
-
-	public void setIssue(long issue) {
-		this.issue = issue;
+	public void setContent(JSONObject content) {
+		this.content = content;
 	}
-
-	public String getObj() {
-		return obj;
-	}
-
-	public void setObj(String obj) {
-		this.obj = obj;
-	}
-	@Override
-	public String toString() {
-		return "EventObject [id=" + id + ", issue=" + issue + ", obj=" + obj + "]";
-	}
+		
 }

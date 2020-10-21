@@ -47,17 +47,29 @@ public class EventResource {
 	
 	@ApiOperation(value = "Retorna os eventos associados a issue informada")
 	@GetMapping(value="/{issue}/events", produces = "application/json")
-	public Iterable<Event> listEvents(@PathVariable(value="issue") Long issue){
+	public Iterable<Event> listEvents(@PathVariable(value="issue") long issue){
 		Iterable<Event> events = eventRepository.findEventsByIssue(issue);
 		return events;
 	}
 	
-	@ApiOperation(value = "Retorna os objetos completos dos eventos associados a issue informada")
-	@GetMapping(value="/{issue}/events/documents", produces = "application/json")
-	public Iterable<JSONObject> listEventsObjs(@PathVariable(value="issue") Long issue){
-		Iterable<JSONObject> events = eventObjectRepository.findEventsByIssue(issue);
-		return events;
-	}
+	
+	
+	
+	//CONTINUAR AQUI
+	//BUSCANDO OBJETOS NO MONGO POR ISSUE
+	
+	
+	
+	
+//	@ApiOperation(value = "Retorna os objetos completos dos eventos associados a issue informada")
+//	@GetMapping(value="/{issue}/events/documents", produces = "application/json")
+//	public Iterable<JSONObject> listEventsObjs(@PathVariable(value="issue") Long issue){
+//		Iterable<JSONObject> events = eventObjectRepository.findByEventsObjectsByIssue(issue);
+//		return events;
+//	}
+	
+	
+	
 
 	@ApiOperation(value = "Cadastrar evento")
 	@PostMapping
@@ -82,13 +94,11 @@ public class EventResource {
 			
 			event = eventService.mapEvent(obj);
 			
-			EventObject eventObj = new EventObject(event.getIssue(), String.valueOf(postGit));
-			
 			log.info("event mapped: " + event);
 
 			if(event != null) {
 				eventRepository.save(event);
-				eventObjectRepository.save(eventObj);
+				eventObjectRepository.save(new EventObject((JSONObject) obj));
 			}			
 
 		} catch (ParseException e) {
@@ -106,13 +116,9 @@ public class EventResource {
 	
 	@ApiOperation(value = "Retorna os eventos associados ao usuário informada")
 	@GetMapping(value="/events/login/{login}", produces = "application/json")
-	public Iterable<Object> findEventsLogin(@PathVariable(value="login") String login) {
+	public Iterable<JSONObject> findEventsLogin(@PathVariable(value="login") String login) {
 		
-		//O ideal seria utilizar para isso um banco de documentos ex. mongodb
-		
-		String parameter = "\"login\":\"" + login + "\"";
-		
-		Iterable<Object> events = eventObjectRepository.findEventsByLogin(parameter);
+		Iterable<JSONObject> events = eventObjectRepository.findByEventsObjectsByLogin(login);
 		return events;
 	}
 }

@@ -31,9 +31,9 @@ class ApirestDemoApplicationTests {
 		
 		Long issue = 1l;
 		
-		Iterable<JSONObject> events = eventObjectRepository.findEventsByIssue(issue);
+		Iterable<Event> events = eventRepository.findEventsByIssue(issue);
 		
-		for(JSONObject event : events) {
+		for(Event event : events) {
 			System.out.println(event);
 		}	
 	}
@@ -55,7 +55,7 @@ class ApirestDemoApplicationTests {
 			EventService eventService = new EventService();
 			event = eventService.mapEvent(obj);
 			
-			EventObject eventObj = new EventObject(event.getIssue(), String.valueOf(jsonObject));
+			EventObject eventObj = new EventObject(jsonObject);
 			
 			if(event != null) {
 				eventRepository.save(event);
@@ -73,5 +73,14 @@ class ApirestDemoApplicationTests {
 			e.printStackTrace();
 		}	
 	}
+	
+	@Test
+    public void findEventsObjsTest(){
+        Iterable<EventObject> events = eventObjectRepository.findAll();
+        for(EventObject event : events){
+            System.out.println(event);
+        }
+    }
+
 
 }

@@ -1,17 +1,18 @@
 package com.spuppi.apirestdemo.repository;
 
 import org.json.simple.JSONObject;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import com.spuppi.apirestdemo.model.EventObject;
 
-public interface EventObjectRepository  extends JpaRepository<EventObject, Long>{
+public interface EventObjectRepository  extends MongoRepository<EventObject, String>{
 	
-	@Query(value = "SELECT * FROM TB_EVENT_OBJ WHERE obj LIKE %:login%", nativeQuery = true)
-	Iterable<Object> findEventsByLogin(@Param("login") String login);
+	//db.getCollection('EVENTS').find({"content.issue.user.login":"spuppi"})
+	
+	@Query("{'content.issue.user.login' : ?0}")
+    Iterable<JSONObject> findByEventsObjectsByLogin(String login);
 
-	@Query(value = "SELECT * FROM TB_EVENT_OBJ WHERE issue = :issue", nativeQuery = true)
-	Iterable<JSONObject> findEventsByIssue(@Param("issue") long issue);
+//	@Query("{'content.issue.user.login' : ?0}")
+//	Iterable<JSONObject> findByEventsObjectsByIssue(Long issue);
 }
