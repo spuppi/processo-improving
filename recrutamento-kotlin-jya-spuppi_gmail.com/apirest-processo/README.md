@@ -57,3 +57,34 @@ POST - /issues
 GET - /issues/{issue}/events
 GET - /issues/{issue}/events/documents
 GET - /issues/events/login/{login}
+
+## 6. Comandos úteis
+
+/home/puppi/DEV/ngrok http 8080
+
+
+Atualizar webhook do git
+
+
+Start springapp
+
+
+Acessar banco postgres
+
+
+sudo -i -u processo_usr
+
+
+psql processo_db
+
+
+Acessar banco mongo
+
+
+mongo
+
+
+use processo_db
+
+
+Ex. de busca: db.getCollection('EVENTS').find({"content.issue.user.login":"spuppi"})

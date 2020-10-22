@@ -8,6 +8,6 @@ import com.spuppi.apirestdemo.model.Event;
 
 public interface EventRepository extends JpaRepository<Event, Long>{
 
-	@Query(value = "SELECT * FROM TB_EVENT WHERE issue = :issue", nativeQuery = true)
+	@Query(value = "SELECT * FROM TB_EVENTS WHERE issue = :issue", nativeQuery = true)
 	Iterable<Event> findEventsByIssue(@Param("issue") long issue);
 }

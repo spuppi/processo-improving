@@ -32,7 +32,7 @@ public class SwaggerConfig {
 	private ApiInfo metaInfo() {
 		
 		ApiInfo apiInfo = new ApiInfo(
-				"API REST processo seletivo",
+				"API REST",
 				"API Demonstrativa",
 				"1.0",
 				"Terms of Service",

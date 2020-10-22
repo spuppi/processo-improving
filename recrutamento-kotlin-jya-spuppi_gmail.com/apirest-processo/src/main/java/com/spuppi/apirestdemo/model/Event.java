@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import com.sun.istack.NotNull;
 
 @Entity
-@Table(name="TB_EVENT")
+@Table(name="TB_EVENTS")
 public class Event {
 
 	@Id

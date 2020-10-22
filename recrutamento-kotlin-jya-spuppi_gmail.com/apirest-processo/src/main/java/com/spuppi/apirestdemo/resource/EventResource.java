@@ -45,32 +45,6 @@ public class EventResource {
 	@Autowired
 	EventObjectRepository eventObjectRepository;
 	
-	@ApiOperation(value = "Retorna os eventos associados a issue informada")
-	@GetMapping(value="/{issue}/events", produces = "application/json")
-	public Iterable<Event> listEvents(@PathVariable(value="issue") long issue){
-		Iterable<Event> events = eventRepository.findEventsByIssue(issue);
-		return events;
-	}
-	
-	
-	
-	
-	//CONTINUAR AQUI
-	//BUSCANDO OBJETOS NO MONGO POR ISSUE
-	
-	
-	
-	
-//	@ApiOperation(value = "Retorna os objetos completos dos eventos associados a issue informada")
-//	@GetMapping(value="/{issue}/events/documents", produces = "application/json")
-//	public Iterable<JSONObject> listEventsObjs(@PathVariable(value="issue") Long issue){
-//		Iterable<JSONObject> events = eventObjectRepository.findByEventsObjectsByIssue(issue);
-//		return events;
-//	}
-	
-	
-	
-
 	@ApiOperation(value = "Cadastrar evento")
 	@PostMapping
 	public ResponseEntity<?> addEvent(@RequestHeader("X-Hub-Signature-256") String signature, @RequestBody byte[] postGit) {
@@ -114,11 +88,26 @@ public class EventResource {
 	            .body(event);
 	}
 	
-	@ApiOperation(value = "Retorna os eventos associados ao usuário informada")
-	@GetMapping(value="/events/login/{login}", produces = "application/json")
-	public Iterable<JSONObject> findEventsLogin(@PathVariable(value="login") String login) {
+	@ApiOperation(value = "Retorna os eventos associados a issue informada")
+	@GetMapping(value="/{issue}/events", produces = "application/json")
+	public Iterable<Event> listEvents(@PathVariable(value="issue") long issue){
+		Iterable<Event> events = eventRepository.findEventsByIssue(issue);
+		return events;
+	}	
+	
+	@ApiOperation(value = "Retorna os documentos dos eventos associados ao usuário informada")
+	@GetMapping(value="/events/documents/login/{login}", produces = "application/json")
+	public Iterable<JSONObject> findEventsDocsByLogin(@PathVariable(value="login") String login) {
 		
 		Iterable<JSONObject> events = eventObjectRepository.findByEventsObjectsByLogin(login);
+		return events;
+	}
+	
+	@ApiOperation(value = "Retorna os documentos dos eventos associados a issue informada")
+	@GetMapping(value="/events/documents/issue/{issue}", produces = "application/json")
+	public Iterable<JSONObject> findEventsDocsByIssue(@PathVariable(value="issue") int issue) {
+		
+		Iterable<JSONObject> events = eventObjectRepository.findByEventsObjectsByIssue(issue);
 		return events;
 	}
 }
