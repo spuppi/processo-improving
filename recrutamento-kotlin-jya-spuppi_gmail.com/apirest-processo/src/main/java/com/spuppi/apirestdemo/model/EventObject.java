@@ -26,6 +26,5 @@ public class EventObject {
 	}
 	public void setContent(JSONObject content) {
 		this.content = content;
-	}
-		
+	}	
 }

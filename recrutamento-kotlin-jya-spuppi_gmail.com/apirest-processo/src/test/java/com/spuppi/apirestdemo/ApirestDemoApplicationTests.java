@@ -27,18 +27,6 @@ class ApirestDemoApplicationTests {
 	EventObjectRepository eventObjectRepository;
 	
 	@Test
-	void listEventsByIssue() {
-		
-		Long issue = 1l;
-		
-		Iterable<Event> events = eventRepository.findEventsByIssue(issue);
-		
-		for(Event event : events) {
-			System.out.println(event);
-		}	
-	}
-	
-	@Test
 	void addEvent() {
 		
 		Event event = null;
@@ -75,12 +63,36 @@ class ApirestDemoApplicationTests {
 	}
 	
 	@Test
+	void listEventsByIssue() {
+		
+		Long issue = 3l;
+		
+		Iterable<Event> events = eventRepository.findEventsByIssue(issue);
+		
+		for(Event event : events) {
+			System.out.println(event);
+		}	
+	}
+	
+	@Test
     public void findEventsObjsTest(){
-        Iterable<EventObject> events = eventObjectRepository.findAll();
-        for(EventObject event : events){
-            System.out.println(event);
+		
+		JSONParser parser = new JSONParser();
+		
+		Iterable<EventObject> events = eventObjectRepository.findAll();
+        
+		for(EventObject event : events){
+		
+			try {
+				Object obj = parser.parse(event.getContent().toJSONString());
+				JSONObject jsonObject = (JSONObject) obj;
+				
+				System.out.println(((JSONObject) ((JSONObject) jsonObject.get("issue")).get("user")).get("login"));
+				System.out.println(jsonObject);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
     }
-
-
 }
