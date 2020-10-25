@@ -55,6 +55,34 @@ public class EventResource {
 		
 		try {
 			
+			
+			
+			
+			//PASSAR SERVICOS DE CONEXAO COM REPOSITORY AOS SERVICES
+						
+			//CRIAR UMA TABELA DE HASHCODE PARA CADA EVENT CADASTRADO NO POSTGRES E TESTS PARA BUSCA DESSE HASHCODE CADASTRAR SECRET KEY NO APPLICATION.PROPERTIES
+			
+			//VERSIONAR API VIA URL
+			
+			//ADICIONAR PAGINACAO NAS CONSULTAS
+			
+			//ADICIONAR LEVEL 3
+			
+			//ENDPOINTS COM CACHES
+			
+			//ADICIONAR TIMEOUTS
+			
+			//ADICIONAR METODO DE MERGE DE BRANCHS
+			
+			//ADICIONAR SSL
+			
+			//ENCAPSULAR EM DOCKER E SUBIR NA AWS
+			
+			//ADICIONAR GITIGNORE
+			
+			
+			
+			
 			EventService eventService = new EventService();
 			
 			if(!StringUtils.equals(eventService.encryptPayload(this.gitSecret, postGit), StringUtils.substringAfter(signature, "sha256="))) {
