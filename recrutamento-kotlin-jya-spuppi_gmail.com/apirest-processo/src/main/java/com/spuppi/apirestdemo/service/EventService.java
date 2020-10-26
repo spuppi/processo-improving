@@ -8,18 +8,29 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.spuppi.apirestdemo.model.Event;
+import com.spuppi.apirestdemo.model.EventObject;
+import com.spuppi.apirestdemo.repository.EventObjectRepository;
+import com.spuppi.apirestdemo.repository.EventRepository;
 import com.spuppi.apirestdemo.resource.EventResource;
 
 public class EventService {
 
 	private static final Logger log = LogManager.getLogger(EventResource.class);
+
+	@Autowired
+	EventRepository eventRepository;
+
+	@Autowired
+	EventObjectRepository eventObjectRepository;
 
 	public Event mapEvent(Object obj) {
 
@@ -56,7 +67,7 @@ public class EventService {
 
 		return event;
 	}
-	
+
 	public String encryptPayload(String secret, byte[] content) {
 		String result = "";
 		Mac sha256_HMAC;
@@ -74,7 +85,47 @@ public class EventService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return result;
+	}
+
+	public boolean isValidPayload(String gitSecret, byte[] postGit, String signature) {
+
+		boolean isValid = false;
+
+		if(!StringUtils.equals(encryptPayload(gitSecret, postGit), StringUtils.substringAfter(signature, "sha256="))) {
+			isValid = true;
+		}
+
+		return isValid;		
+	}
+
+	public Event saveEvent(byte[] postGit) {
+		
+		Event event = null;
+
+		try {
+
+			JSONParser parser = new JSONParser();
+
+			Object obj = parser.parse(new String(postGit, "UTF-8"));
+			event = mapEvent(obj);
+
+			log.info("event mapped: " + event);
+
+			if(eventRepository.findAll().contains(event)) { //event != null
+				eventRepository.save(event);
+				eventObjectRepository.save(new EventObject((JSONObject) obj));
+			}
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return event;
 	}
 }

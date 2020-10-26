@@ -96,6 +96,29 @@ public class Event {
 	public void setClosed_at(String closed_at) {
 		this.closed_at = closed_at;
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Event other = (Event) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		return "Event [id=" + id + ", issue=" + issue + ", action=" + action + ", title=" + title + ", login=" + login

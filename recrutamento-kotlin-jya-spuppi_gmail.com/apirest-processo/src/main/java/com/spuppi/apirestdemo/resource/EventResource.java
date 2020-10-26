@@ -1,13 +1,8 @@
 package com.spuppi.apirestdemo.resource;
 
-import java.io.UnsupportedEncodingException;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spuppi.apirestdemo.model.Event;
-import com.spuppi.apirestdemo.model.EventObject;
 import com.spuppi.apirestdemo.repository.EventObjectRepository;
 import com.spuppi.apirestdemo.repository.EventRepository;
 import com.spuppi.apirestdemo.service.EventService;
@@ -32,110 +26,90 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value="/issues")
 public class EventResource {
 
-	private static final JSONParser PARSER = new JSONParser();
-	
 	private static final Logger log = LogManager.getLogger(EventResource.class);
 	
+	
+	
+
+	//PASSAR SERVICOS DE CONEXAO COM REPOSITORY AOS SERVICES
+
+	//CRIAR UMA TABELA DE HASHCODE PARA CADA EVENT CADASTRADO NO POSTGRES E TESTS PARA BUSCA DESSE HASHCODE CADASTRAR SECRET KEY NO APPLICATION.PROPERTIES
+
+	//VERSIONAR API VIA URL
+
+	//ADICIONAR PAGINACAO NAS CONSULTAS
+
+	//ADICIONAR LEVEL 3
+
+	//ENDPOINTS COM CACHES
+
+	//ADICIONAR TIMEOUTS
+
+	//ADICIONAR METODO DE MERGE DE BRANCHS
+
+	//ADICIONAR SSL
+
+	//ENCAPSULAR EM DOCKER E SUBIR NA AWS
+
+	//ADICIONAR GITIGNORE
+	
+
 	@Value("${git.secret}")
 	private String gitSecret;
-	
+
 	@Autowired
 	EventRepository eventRepository;
-	
+
 	@Autowired
 	EventObjectRepository eventObjectRepository;
-	
+
 	@ApiOperation(value = "Cadastrar evento")
 	@PostMapping
 	public ResponseEntity<?> addEvent(@RequestHeader("X-Hub-Signature-256") String signature, @RequestBody byte[] postGit) {
-		
+
 		log.info("addEvent: " + postGit);
-		
-		Event event = null;
-		
-		try {
-			
-			
-			
-			
-			//PASSAR SERVICOS DE CONEXAO COM REPOSITORY AOS SERVICES
-						
-			//CRIAR UMA TABELA DE HASHCODE PARA CADA EVENT CADASTRADO NO POSTGRES E TESTS PARA BUSCA DESSE HASHCODE CADASTRAR SECRET KEY NO APPLICATION.PROPERTIES
-			
-			//VERSIONAR API VIA URL
-			
-			//ADICIONAR PAGINACAO NAS CONSULTAS
-			
-			//ADICIONAR LEVEL 3
-			
-			//ENDPOINTS COM CACHES
-			
-			//ADICIONAR TIMEOUTS
-			
-			//ADICIONAR METODO DE MERGE DE BRANCHS
-			
-			//ADICIONAR SSL
-			
-			//ENCAPSULAR EM DOCKER E SUBIR NA AWS
-			
-			//ADICIONAR GITIGNORE
-			
-			
-			
-			
-			EventService eventService = new EventService();
-			
-			if(!StringUtils.equals(eventService.encryptPayload(this.gitSecret, postGit), StringUtils.substringAfter(signature, "sha256="))) {
-				log.error("Hash error");
-				return ResponseEntity
-			            .status(HttpStatus.UNAUTHORIZED)
-			            .body("Secret Key anauthorized!");
-			}
-			
-			Object obj = PARSER.parse(new String(postGit, "UTF-8"));
-			
-			event = eventService.mapEvent(obj);
-			
-			log.info("event mapped: " + event);
 
-			if(event != null) {
-				eventRepository.save(event);
-				eventObjectRepository.save(new EventObject((JSONObject) obj));
-			}			
+		EventService eventService = new EventService();
 
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(!eventService.isValidPayload(signature, postGit, signature)) {
+			log.error("Hash error");
+			return ResponseEntity
+					.status(HttpStatus.UNAUTHORIZED)
+					.body("Secret Key anauthorized!");
 		}
 		
 		return ResponseEntity
-	            .status(HttpStatus.ACCEPTED)
-	            .body(event);
+				.status(HttpStatus.ACCEPTED)
+				.body(eventService.saveEvent(postGit));
 	}
-	
+
 	@ApiOperation(value = "Retorna os eventos associados a issue informada")
 	@GetMapping(value="/{issue}/events", produces = "application/json")
-	public Iterable<Event> listEvents(@PathVariable(value="issue") long issue){
+	public ResponseEntity<?> listEvents(@PathVariable(value="issue") long issue){
 		Iterable<Event> events = eventRepository.findEventsByIssue(issue);
-		return events;
+		return ResponseEntity
+				.status(HttpStatus.FOUND)
+				.body(events);
+		//return events;
 	}	
-	
+
 	@ApiOperation(value = "Retorna os documentos dos eventos associados ao usuário informada")
 	@GetMapping(value="/events/documents/login/{login}", produces = "application/json")
-	public Iterable<JSONObject> findEventsDocsByLogin(@PathVariable(value="login") String login) {
-		
+	public ResponseEntity<?> findEventsDocsByLogin(@PathVariable(value="login") String login) {
 		Iterable<JSONObject> events = eventObjectRepository.findByEventsObjectsByLogin(login);
-		return events;
+		return ResponseEntity
+				.status(HttpStatus.FOUND)
+				.body(events);
+		//return events;
 	}
-	
+
 	@ApiOperation(value = "Retorna os documentos dos eventos associados a issue informada")
 	@GetMapping(value="/events/documents/issue/{issue}", produces = "application/json")
-	public Iterable<JSONObject> findEventsDocsByIssue(@PathVariable(value="issue") int issue) {
-		
+	public ResponseEntity<?> findEventsDocsByIssue(@PathVariable(value="issue") int issue) {
 		Iterable<JSONObject> events = eventObjectRepository.findByEventsObjectsByIssue(issue);
-		return events;
+		return ResponseEntity
+				.status(HttpStatus.FOUND)
+				.body(events);
+		//return events;
 	}
 }
