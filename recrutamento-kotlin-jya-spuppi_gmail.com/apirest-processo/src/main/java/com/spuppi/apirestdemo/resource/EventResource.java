@@ -27,35 +27,29 @@ import io.swagger.annotations.ApiOperation;
 public class EventResource {
 
 	private static final Logger log = LogManager.getLogger(EventResource.class);
-	
-	
-	
-
-	//PASSAR SERVICOS DE CONEXAO COM REPOSITORY AOS SERVICES
-
-	//CRIAR UMA TABELA DE HASHCODE PARA CADA EVENT CADASTRADO NO POSTGRES E TESTS PARA BUSCA DESSE HASHCODE CADASTRAR SECRET KEY NO APPLICATION.PROPERTIES
-
-	//VERSIONAR API VIA URL
 
 	//ADICIONAR PAGINACAO NAS CONSULTAS
 
 	//ADICIONAR LEVEL 3
 
-	//ENDPOINTS COM CACHES
+	//ENDPOINTS COM CACHES PARA OBJETOS DOS EVENTOS
 
 	//ADICIONAR TIMEOUTS
 
-	//ADICIONAR METODO DE MERGE DE BRANCHS
+	//ADICIONAR METODO DE MERGE DE BRANCHS - POST
 
 	//ADICIONAR SSL
 
 	//ENCAPSULAR EM DOCKER E SUBIR NA AWS
 
 	//ADICIONAR GITIGNORE
-	
+
 
 	@Value("${git.secret}")
 	private String gitSecret;
+
+	@Autowired
+	EventService eventService;
 
 	@Autowired
 	EventRepository eventRepository;
@@ -69,17 +63,15 @@ public class EventResource {
 
 		log.info("addEvent: " + postGit);
 
-		EventService eventService = new EventService();
-
 		if(!eventService.isValidPayload(signature, postGit, signature)) {
 			log.error("Hash error");
 			return ResponseEntity
 					.status(HttpStatus.UNAUTHORIZED)
 					.body("Secret Key anauthorized!");
 		}
-		
+
 		return ResponseEntity
-				.status(HttpStatus.ACCEPTED)
+				.status(HttpStatus.CREATED)
 				.body(eventService.saveEvent(postGit));
 	}
 
@@ -88,9 +80,8 @@ public class EventResource {
 	public ResponseEntity<?> listEvents(@PathVariable(value="issue") long issue){
 		Iterable<Event> events = eventRepository.findEventsByIssue(issue);
 		return ResponseEntity
-				.status(HttpStatus.FOUND)
+				.status(HttpStatus.OK)
 				.body(events);
-		//return events;
 	}	
 
 	@ApiOperation(value = "Retorna os documentos dos eventos associados ao usuário informada")
@@ -98,9 +89,8 @@ public class EventResource {
 	public ResponseEntity<?> findEventsDocsByLogin(@PathVariable(value="login") String login) {
 		Iterable<JSONObject> events = eventObjectRepository.findByEventsObjectsByLogin(login);
 		return ResponseEntity
-				.status(HttpStatus.FOUND)
+				.status(HttpStatus.OK)
 				.body(events);
-		//return events;
 	}
 
 	@ApiOperation(value = "Retorna os documentos dos eventos associados a issue informada")
@@ -108,8 +98,7 @@ public class EventResource {
 	public ResponseEntity<?> findEventsDocsByIssue(@PathVariable(value="issue") int issue) {
 		Iterable<JSONObject> events = eventObjectRepository.findByEventsObjectsByIssue(issue);
 		return ResponseEntity
-				.status(HttpStatus.FOUND)
+				.status(HttpStatus.OK)
 				.body(events);
-		//return events;
 	}
 }

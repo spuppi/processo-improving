@@ -3,6 +3,7 @@ package com.spuppi.apirestdemo.service;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -15,6 +16,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.spuppi.apirestdemo.model.Event;
 import com.spuppi.apirestdemo.model.EventObject;
@@ -22,6 +24,7 @@ import com.spuppi.apirestdemo.repository.EventObjectRepository;
 import com.spuppi.apirestdemo.repository.EventRepository;
 import com.spuppi.apirestdemo.resource.EventResource;
 
+@Service
 public class EventService {
 
 	private static final Logger log = LogManager.getLogger(EventResource.class);
@@ -113,7 +116,7 @@ public class EventService {
 
 			log.info("event mapped: " + event);
 
-			if(eventRepository.findAll().contains(event)) { //event != null
+			if(event != null) {
 				eventRepository.save(event);
 				eventObjectRepository.save(new EventObject((JSONObject) obj));
 			}
@@ -127,5 +130,22 @@ public class EventService {
 		}
 		
 		return event;
+	}
+	
+	public JSONObject response(Object metadata, Object content, List<String> links) {
+		
+		JSONObject response = new JSONObject();
+		
+		response.put("metadata", metadata);
+		
+		response.put("content", content);
+		
+		
+		for(String href : links) {
+			response.put("content", content);	
+		}
+		
+		
+		return null;		
 	}
 }
