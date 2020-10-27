@@ -69,19 +69,37 @@ Atualizar webhook do git
 Start springapp
 
 
+sudo -u postgres createuser --interactive
+
+
+sudo adduser processo_usr
+
+
 Acessar banco postgres
 
 
 sudo -i -u processo_usr
 
 
+createdb processo_db
+
+
 psql processo_db
+
+
+ALTER USER processo_usr WITH PASSWORD '5gxq20vjma0p';
 
 
 Acessar banco mongo
 
 
 mongo
+
+
+db.createCollection('processo_db')
+
+
+db.createUser({user: "processo_usr",pwd: "5gxq20vjma0p",roles: [{ role:"readWrite", db:"processo_db" }]})
 
 
 use processo_db

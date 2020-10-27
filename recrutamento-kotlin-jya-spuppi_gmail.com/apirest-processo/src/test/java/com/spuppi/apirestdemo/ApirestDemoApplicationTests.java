@@ -10,6 +10,9 @@ import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import com.spuppi.apirestdemo.model.Event;
 import com.spuppi.apirestdemo.model.EventObject;
@@ -67,7 +70,9 @@ class ApirestDemoApplicationTests {
 		
 		Long issue = 3l;
 		
-		Iterable<Event> events = eventRepository.findEventsByIssue(issue);
+		PageRequest pageRequest = PageRequest.of(0, 5, Sort.Direction.ASC, "issue");
+		
+		Page<Event> events = eventRepository.findEventsByIssue(issue, pageRequest);
 		
 		for(Event event : events) {
 			System.out.println(event);

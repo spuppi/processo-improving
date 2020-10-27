@@ -3,7 +3,6 @@ package com.spuppi.apirestdemo.service;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -16,6 +15,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.spuppi.apirestdemo.model.Event;
@@ -132,20 +134,22 @@ public class EventService {
 		return event;
 	}
 	
-	public JSONObject response(Object metadata, Object content, List<String> links) {
-		
-		JSONObject response = new JSONObject();
-		
-		response.put("metadata", metadata);
-		
-		response.put("content", content);
-		
-		
-		for(String href : links) {
-			response.put("content", content);	
-		}
-		
-		
-		return null;		
+	public Page<Event> findEventsByIssue(long issue, int page, int size) {
+        
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, "issue");
+
+        return eventRepository.findEventsByIssue(issue, pageRequest);
+    }
+
+	public Page<JSONObject> findByEventsObjectsByLogin(String login, int page, int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, "issue");
+
+        return eventObjectRepository.findEventsDocsByLogin(login, pageRequest);
+	}
+
+	public Page<JSONObject> findByEventsObjectsByIssue(int issue, int page, int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, "issue");
+
+        return eventObjectRepository.findEventsDocsByLogin(issue, pageRequest);
 	}
 }
