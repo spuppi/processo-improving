@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.spuppi.apirestdemo.model.Event;
 import com.spuppi.apirestdemo.repository.EventObjectRepository;
 import com.spuppi.apirestdemo.service.EventService;
+import com.spuppi.exception.RequestNotAuthorizedException;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -61,9 +62,7 @@ public class EventResource {
 
 		if(!eventService.isValidPayload(signature, postGit, signature)) {
 			log.error("Hash error");
-			return ResponseEntity
-					.status(HttpStatus.UNAUTHORIZED)
-					.body("Secret Key anauthorized!");
+			throw new RequestNotAuthorizedException("HASH error");
 		}
 
 		return ResponseEntity
